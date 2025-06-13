@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 from dotenv import load_dotenv
@@ -7,12 +8,24 @@ load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 
 
-client = genai.Client(api_key=api_key)
+async def generate_text(prompt):
+    client = genai.Client(api_key=api_key)
+
+    response = client.models.generate_content(
+        model="gemini-2.0-flash-001",
+        contents=prompt,
+    )
+
+    print(response.text)
+    print(
+        f"Prompt tokens: {response.usage_metadata.prompt_token_count}\n Response tokenss: {response.usage_metadata.candidates_token_count}"
+    )
 
 
-def main():
+async def main():
     print("Hello from agentic!")
+    await generate_text("Is AI coming for my software engineering job?")
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
