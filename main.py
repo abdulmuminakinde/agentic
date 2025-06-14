@@ -14,6 +14,9 @@ async def generate_text():
         prompt = " ".join(sys.argv[1:])
         if prompt == "":
             prompt = input("What is your prompt?\n>> ")
+        if prompt == "":
+            print("No prompt provided. Please provide a prompt.")
+            sys.exit(1)
         suffix = "Reply in just one paragraph."
         client = genai.Client(api_key=api_key)
 
