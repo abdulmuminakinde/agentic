@@ -4,6 +4,7 @@ import sys
 
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
 
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
@@ -17,12 +18,16 @@ async def generate_text():
         if prompt == "":
             print("No prompt provided. Please provide a prompt.")
             sys.exit(1)
-        suffix = "Reply in just one paragraph."
+        suffix = " Reply in just one paragraph."
         client = genai.Client(api_key=api_key)
+
+        messages = [
+            types.Content(role="user", parts=[types.Part(text=prompt + suffix)])
+        ]
 
         response = await client.aio.models.generate_content(
             model="gemini-2.0-flash-001",
-            contents=f"{prompt} {suffix}",
+            contents=messages,
         )
 
         print(response.text)
