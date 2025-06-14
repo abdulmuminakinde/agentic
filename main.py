@@ -11,7 +11,7 @@ api_key = os.getenv("GEMINI_API_KEY")
 async def generate_text(prompt):
     client = genai.Client(api_key=api_key)
 
-    response = client.models.generate_content(
+    response = await client.aio.models.generate_content(
         model="gemini-2.0-flash-001",
         contents=prompt,
     )
@@ -23,8 +23,13 @@ async def generate_text(prompt):
 
 
 async def main():
+    task = asyncio.create_task(
+        generate_text(
+            "Is cloud computing the same as cloud engineering? Reply in one paragraph maximum."
+        )
+    )
     print("Hello from agentic!")
-    await generate_text("Is AI coming for my software engineering job?")
+    await task
 
 
 if __name__ == "__main__":
