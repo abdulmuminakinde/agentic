@@ -1,7 +1,7 @@
 import sys
 
-from .calculator import Calculator
-from .render import render
+from pkg.calculator import Calculator
+from pkg.render import render
 
 
 def main():
