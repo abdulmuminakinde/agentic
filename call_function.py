@@ -28,6 +28,7 @@ def call_function(function_call_part, verbose=False):
         "run_python_file": run_python_file,
         "write_file": write_file,
     }
+
     function_name = function_call_part.name
 
     if function_name not in function_map:
