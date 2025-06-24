@@ -44,8 +44,8 @@ def generate_response(
 
 
 def main():
-
     load_dotenv()
+
     api_key = os.getenv("GEMINI_API_KEY")
 
     args = [arg for arg in sys.argv[1:] if not arg.startswith("--")]
@@ -68,8 +68,7 @@ def main():
 
         messages = [types.Content(role="user", parts=[types.Part(text=prompt)])]
 
-        for iteration in range(30):
-
+        for _ in range(30):
             response = generate_response(client, messages, verbose)
 
             if response.candidates:
@@ -77,24 +76,14 @@ def main():
                     if candidate.content:
                         messages.append(candidate.content)
 
-            has_function_calls = False
-            has_text = False
-
-            if response.candidates:
-                for candidate in response.candidates:
-                    if candidate.content and candidate.content.parts:
-                        for part in candidate.content.parts:
-                            if part.text:
-                                print(part.text)  # Print explanatory text immediately
-                                has_text = True
-                            elif hasattr(part, "function_call") and part.function_call:
-                                has_function_calls = True
+            if response.candidates and response.candidates[0].content:
+                for part in response.candidates[0].content.parts or []:
+                    if part.text:
+                        print(part.text)
 
             if response.function_calls:
-                has_function_calls = True
                 for function_call_part in response.function_calls:
                     function_call_result = call_function(function_call_part, verbose)
-
                     if (
                         not function_call_result.parts
                         or not function_call_result.parts[0].function_response
@@ -104,23 +93,15 @@ def main():
                         print(
                             f"-> {function_call_result.parts[0].function_response.response}"
                         )
-                        messages.append(function_call_result)
-
-            if has_function_calls:
-                continue
+                    messages.append(function_call_result)
+                    continue
             else:
-                if not has_text:
-                    if response.text:
-                        print(response.text)
-                print(f"\nAgent completed task in {iteration + 1} iterations.")
                 break
 
+                break
     except KeyboardInterrupt:
         print("\nGoodbye!")
         return  # Properly exit the function on keyboard interrupt
-    except Exception as e:
-        print(f"Error: {e}")
-        return
 
 
 if __name__ == "__main__":
