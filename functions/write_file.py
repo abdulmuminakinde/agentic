@@ -1,18 +1,20 @@
-import os
+from pathlib import Path
 
 from google.genai import types
 
 
 def write_file(working_directory, file_path, file_content):
-    abs_working_dir = os.path.abspath(working_directory)
-    target_file = os.path.abspath(os.path.join(working_directory, file_path))
+    abs_working_dir = Path(working_directory)
+    target_file = abs_working_dir / file_path
 
-    if not target_file.startswith(abs_working_dir):
+    if not target_file.is_relative_to(abs_working_dir):
         return f'Error: Cannot write "{file_path}" as it is outside the permitted working directory'
 
     try:
-        if not os.path.exists(target_file):
-            os.makedirs(os.path.dirname(target_file), exist_ok=True)
+        if not target_file.exists():
+            target_file.parent.mkdir(parents=True, exist_ok=True)
+            print(f"Created directory for file '{file_path}'")
+            target_file.touch()
     except Exception as e:
         return f"Error creating directory for file '{file_path}': {e}"
 

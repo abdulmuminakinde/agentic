@@ -1,20 +1,20 @@
-import os
 import subprocess
+from pathlib import Path
 
 from google.genai import types
 
 
 def run_python_file(working_directory, file_path):
-    abs_working_dir = os.path.abspath(working_directory)
-    target_file = os.path.abspath(os.path.join(working_directory, file_path))
+    abs_working_dir = Path(working_directory).resolve()
+    target_file = abs_working_dir / file_path
 
-    if not target_file.startswith(abs_working_dir):
+    if not target_file.is_relative_to(abs_working_dir):
         return f'Error: Cannot run "{file_path}" as it is outside the permitted working directory'
 
-    if not os.path.exists(target_file):
+    if not target_file.exists():
         return f'Error: File not found: "{file_path}"'
 
-    if not target_file.endswith(".py"):
+    if not target_file.suffix == ".py":
         return f'Error: File is not a Python file: "{file_path}"'
 
     try:

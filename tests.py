@@ -1,17 +1,20 @@
+from functions.get_files_content import get_file_content
+from functions.get_files_info import get_files_info
 from functions.run_python_file import run_python_file
+from functions.write_file import write_file
 
 
 def tests():
-    result = run_python_file("calculator", "main.py")
+    result = get_file_content("calculator", "pkg/render.py")
     print(result)
 
-    result = run_python_file("calculator", "tests.py")
+    result = get_files_info("calculator")
     print(result)
 
-    result = run_python_file("calculator", "../main.py")
-    print(result)
+    resutl = run_python_file("calculator", "tests.py")
+    print(resutl)
 
-    result = run_python_file("calculator", "nonexistent.py")
+    result = write_file("calculator", "test.txt", "Hello, World!")
     print(result)
 
 
