@@ -54,17 +54,29 @@ The `main.py` script initializes a Gemini AI client using an API key obtained fr
 
 3.  **Run the script:**
 
+    You can provide a prompt directly as a command-line argument:
+
     ```bash
     python main.py "<your_prompt>"
     ```
 
     Replace `<your_prompt>` with the prompt you want to send to the AI assistant.
 
-    You can also run the script without a prompt and it will ask you to enter one:
+    Alternatively, you can run the script without a prompt. It will then enter an interactive mode, prompting you to enter your prompt:
 
     ```bash
     python main.py
     ```
+
+    The script will then ask:
+
+    ```
+    What is your prompt?
+    Press Ctrl+C to exit.
+    >>
+    ```
+
+    Enter your prompt and press Enter.
 
 4.  **Verbose Mode:**
 
@@ -72,6 +84,12 @@ The `main.py` script initializes a Gemini AI client using an API key obtained fr
 
     ```bash
     python main.py "<your_prompt>" --verbose
+    ```
+
+    or in interactive mode:
+
+    ```bash
+    python main.py --verbose
     ```
 
 ## Extending the Code
