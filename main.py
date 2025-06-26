@@ -5,9 +5,13 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 from prompt_toolkit import PromptSession
+from rich.console import Console
 
 from call_function import available_functions, call_function
+from format import print_formatted_response
 from prompt import system_prompt
+
+console = Console()
 
 
 def generate_response(
@@ -40,8 +44,8 @@ def generate_response(
     #     print(f"API Error: {e}")
     #     sys.exit(3)
 
-    except Exception as e:
-        print(f"Error: {e}")
+    except Exception:
+        console.print_exception(locals=True)
         sys.exit(1)
 
 
@@ -77,7 +81,7 @@ def chat_with_agent(
             if response.candidates and response.candidates[0].content:
                 for part in response.candidates[0].content.parts or []:
                     if part.text:
-                        print(part.text)
+                        print_formatted_response(part.text)
 
             if response.function_calls:
                 for function_call_part in response.function_calls:

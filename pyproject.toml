@@ -8,4 +8,5 @@ dependencies = [
     "google-genai==1.12.1",
     "prompt-toolkit>=3.0.51",
     "python-dotenv==1.1.0",
+    "rich>=14.0.0",
 ]

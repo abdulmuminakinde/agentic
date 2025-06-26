@@ -75,6 +75,12 @@ or in chat mode:
 python main.py --chat --verbose
 ```
 
+## Configuration
+
+The color configuration is set to: `bright_yellow` by default.
+
+To change the color, modify the `COLOR` variable in the `config.py` file.
+
 ## Project Structure
 
 - `main.py`: The main entry point for the application.
