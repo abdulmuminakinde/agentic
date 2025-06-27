@@ -6,7 +6,6 @@ from google.genai import types
 
 def get_git_diff(working_directory, directory=None):
     abs_working_dir = Path(working_directory).resolve()
-    print(abs_working_dir)
     target_dir = abs_working_dir
 
     if directory:
