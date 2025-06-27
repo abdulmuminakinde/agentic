@@ -15,7 +15,6 @@ This project is an AI-powered code assistant that uses the Gemini API to respond
 ## Prerequisites
 
 - Python 3.6 or higher
-- A Google Cloud project with the Gemini API enabled
 - A Gemini API key
 
 ## Installation

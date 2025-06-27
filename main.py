@@ -45,7 +45,7 @@ def generate_response(
     #     sys.exit(3)
 
     except Exception:
-        console.print_exception(locals=True)
+        console.print_exception()
         sys.exit(1)
 
 
@@ -70,35 +70,47 @@ def chat_with_agent(
 
         messages.append(types.Content(role="user", parts=[types.Part(text=prompt)]))
 
-        for _ in range(30):
-            response = generate_response(client, messages, verbose)
+        try:
+            for _ in range(30):
+                response = generate_response(client, messages, verbose)
 
-            if response.candidates:
-                for candidate in response.candidates:
-                    if candidate.content:
-                        messages.append(candidate.content)
+                if response.candidates:
+                    for candidate in response.candidates:
+                        if candidate.content:
+                            messages.append(candidate.content)
 
-            if response.candidates and response.candidates[0].content:
-                for part in response.candidates[0].content.parts or []:
-                    if part.text:
-                        print_formatted_response(part.text)
+                if response.candidates and response.candidates[0].content:
+                    for part in response.candidates[0].content.parts or []:
+                        if part.text:
+                            print_formatted_response(part.text)
 
-            if response.function_calls:
-                for function_call_part in response.function_calls:
-                    function_call_result = call_function(function_call_part, verbose)
-                    if (
-                        not function_call_result.parts
-                        or not function_call_result.parts[0].function_response
-                    ):
-                        raise Exception("empty function call result")
-                    if verbose:
-                        print(
-                            f"-> {function_call_result.parts[0].function_response.response}"
+                if response.function_calls:
+
+                    function_response_parts = []
+                    for function_call_part in response.function_calls:
+                        function_call_result = call_function(
+                            function_call_part, verbose
                         )
-                    messages.append(function_call_result)
+                        if function_call_result.parts is not None:
+                            function_response_parts.extend(function_call_result.parts)
+                        if (
+                            not function_call_result.parts
+                            or not function_call_result.parts[0].function_response
+                        ):
+                            raise Exception("empty function call result")
+                        if verbose:
+                            print(
+                                f"-> {function_call_result.parts[0].function_response.response}"
+                            )
+                    messages.append(
+                        types.Content(role="tool", parts=function_response_parts)
+                    )
                     continue
-            else:
-                break
+                else:
+                    break
+        except Exception:
+            console.print_exception()
+            break
 
 
 def main():
