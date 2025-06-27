@@ -30,13 +30,16 @@ def get_files_info(working_directory, directory=None):
 
     try:
         files_info = []
-        for filename in target_dir.iterdir():
-            filepath = target_dir / filename
+        for item_path in target_dir.iterdir():
             file_size = 0
-            is_dir = filepath.is_dir()
-            file_size = filepath.stat().st_size
+            is_dir = item_path.is_dir()
+            try:
+                file_size = item_path.stat().st_size
+            except PermissionError:
+                files_info.append(f"- {item_path}: permission denied")
+                continue
             files_info.append(
-                f"- {filename}: file_size={file_size} bytes, is_dir={is_dir}"
+                f"- {item_path}: file_size={file_size} bytes, is_dir={is_dir}"
             )
         return "\n".join(files_info)
 
