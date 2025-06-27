@@ -7,8 +7,9 @@ This project is an AI-powered code assistant that uses the Gemini API to respond
 - **Prompt-based interaction:** You can provide a prompt to the assistant, and it will generate a response based on the prompt.
 - **Code execution:** The assistant can execute Python code snippets within a sandboxed environment.
 - **Function calling:** The assistant can call predefined functions to perform specific tasks.
-- **Code review assistance:** The assistant can analyze git diffs to provide insights and suggestions for code improvements.
 - **Chat mode:** An interactive chat mode allows you to have a conversation with the assistant.
+- **Code review assistance:** The assistant can analyze git diffs to provide insights and suggestions for code improvements.
+- **Commit git changes:** Commits changes to the git repository with a specified message.
 - **Verbose mode:** Provides detailed information about the API usage and function call results.
 
 ## Prerequisites
@@ -97,4 +98,3 @@ To change the color, modify the `COLOR` variable in the `config.py` file.
 ## Contributing
 
 Contributions are welcome! Please submit a pull request with your changes.
-

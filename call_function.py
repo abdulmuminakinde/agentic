@@ -4,6 +4,7 @@ from config import WORKING_DIR
 from functions.get_files_content import get_file_content, schema_get_file_content
 from functions.get_files_info import get_files_info, schema_get_files_info
 from functions.get_git_diff import get_git_diff, schema_get_git_diff
+from functions.git_commit import commit_git_message, schema_commit_git_message
 from functions.run_python_file import run_python_file, schema_run_python_file
 from functions.write_file import schema_write_file, write_file
 
@@ -14,6 +15,7 @@ available_functions = types.Tool(
         schema_run_python_file,
         schema_write_file,
         schema_get_git_diff,
+        schema_commit_git_message,
     ]
 )
 
@@ -30,6 +32,7 @@ def call_function(function_call_part, verbose=False):
         "run_python_file": run_python_file,
         "write_file": write_file,
         "get_git_diff": get_git_diff,
+        "commit_git_message": commit_git_message,
     }
 
     function_name = function_call_part.name
