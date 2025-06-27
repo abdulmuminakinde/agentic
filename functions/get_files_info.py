@@ -10,7 +10,16 @@ def get_files_info(working_directory, directory=None):
     if directory:
         target_dir = target_dir / directory
 
-    if not target_dir.is_relative_to(abs_working_dir):
+    if not target_dir.exists():
+        if directory:
+            return f'Error: "{directory}" is not a directory'
+        else:
+            return f'Error: "{working_directory}" is not a directory'
+
+    try:
+        if not target_dir.resolve().is_relative_to(abs_working_dir):
+            return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
+    except ValueError:
         return f'Error: Cannot list "{directory}" as it is outside the permitted working directory'
 
     if not target_dir.is_dir:
