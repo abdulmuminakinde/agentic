@@ -7,11 +7,10 @@ from google.genai import types
 from prompt_toolkit import PromptSession
 from rich.console import Console
 
-from call_function import available_functions, call_function
+from core.function_dispatcher import call_function
+from core.tool_registry import available_tools
 from format import print_formatted_response
 from prompt import system_prompt
-
-console = Console()
 
 
 def generate_response(
@@ -23,7 +22,7 @@ def generate_response(
             model="gemini-2.0-flash-001",
             contents=messages,
             config=types.GenerateContentConfig(
-                tools=[available_functions],
+                tools=[available_tools],
                 system_instruction=system_prompt,
             ),
         )
@@ -45,7 +44,9 @@ def generate_response(
     #     sys.exit(3)
 
     except Exception:
-        console.print_exception()
+        with open("log.txt", "w") as f:
+            console = Console(file=f)
+            console.print_exception()
         sys.exit(1)
 
 
