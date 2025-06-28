@@ -14,3 +14,6 @@ class GetFileContentTool(ToolPlugin):
     def run(self, **kwargs) -> dict:
         result = get_file_content(**kwargs)
         return {"output": result}
+
+    def requires_confirmation(self) -> bool:
+        return False

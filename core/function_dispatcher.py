@@ -1,6 +1,7 @@
 from google.genai import types
 
 from config import WORKING_DIR
+from core.confirmation_store import confirmation_queue
 from core.tool_registry import tool_map
 
 
@@ -22,6 +23,29 @@ def call_function(function_call_part, verbose=False):
                 types.Part.from_function_response(
                     name=function_name,
                     response={"error": f"Unknown function: {function_name}"},
+                )
+            ],
+        )
+    if tool.requires_confirmation():
+        confirmation_queue["pending"] = {
+            "tool": tool,
+            "args": args,
+            "function_name": function_name,
+        }
+
+        return types.Content(
+            role="tool",
+            parts=[
+                types.Part.from_function_response(
+                    name=function_name,
+                    response={
+                        "result": {
+                            "tool": function_name,
+                            "confirmation_required": True,
+                            "args": args,
+                            "note": f"{function_name} requires confirmation.",
+                        }
+                    },
                 )
             ],
         )

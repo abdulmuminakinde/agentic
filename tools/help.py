@@ -34,3 +34,6 @@ class HelpTool(ToolPlugin):
             return {"output": "No tools registered."}
 
         return {"tools": tool_list}
+
+    def requires_confirmation(self) -> bool:
+        return False

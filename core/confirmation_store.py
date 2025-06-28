@@ -1,0 +1,1 @@
+confirmation_queue = {}

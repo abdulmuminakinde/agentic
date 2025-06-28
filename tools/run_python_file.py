@@ -14,3 +14,6 @@ class RunPythonFileTool(ToolPlugin):
     def run(self, **kwargs) -> dict:
         result = run_python_file(**kwargs)
         return {"output": result}
+
+    def requires_confirmation(self) -> bool:
+        return False

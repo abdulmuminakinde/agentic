@@ -14,3 +14,6 @@ class CommitGitMessageTool(ToolPlugin):
     def run(self, **kwargs) -> dict:
         result = commit_git_message(**kwargs)
         return {"output": result}
+
+    def requires_confirmation(self) -> bool:
+        return True
