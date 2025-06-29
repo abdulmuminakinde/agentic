@@ -7,6 +7,7 @@ from google.genai import types
 from prompt_toolkit import PromptSession
 from rich.console import Console
 
+from core.confirmation_store import confirmation_queue
 from core.function_dispatcher import call_function
 from core.tool_registry import available_tools
 from format import print_formatted_response
@@ -73,6 +74,21 @@ def chat_with_agent(
 
         try:
             for _ in range(30):
+                if "pending" in confirmation_queue:
+                    pending = confirmation_queue["pending"]
+                    pending_tool = pending["tool"]
+                    pending_args = pending["args"]
+
+                    system_reminder = types.Content(
+                        role="system",
+                        parts=[
+                            types.Part(
+                                text=f"There is a pending tool call: '{pending_tool.name}' with arguments: {pending_args}. If the user confirms, you may execute it"
+                            )
+                        ],
+                    )
+
+                    messages.insert(0, system_reminder)
                 response = generate_response(client, messages, verbose)
 
                 if response.candidates:
@@ -87,29 +103,25 @@ def chat_with_agent(
 
                 if response.function_calls:
 
-                    function_response_parts = []
+                    tool_turn_parts = []
                     for function_call_part in response.function_calls:
-                        function_call_result = call_function(
-                            function_call_part, verbose
-                        )
-                        if function_call_result.parts is not None:
-                            function_response_parts.extend(function_call_result.parts)
-                        if (
-                            not function_call_result.parts
-                            or not function_call_result.parts[0].function_response
-                        ):
+                        result = call_function(function_call_part, verbose)
+                        if not result.parts or not result.parts[0].function_response:
+                            raise Exception(
+                                "Empty function call results or invalid function response"
+                            )
+
+                        tool_turn_parts.append(result.parts[0])
+                        if not result.parts or not result.parts[0].function_response:
                             raise Exception("empty function call result")
                         if verbose:
-                            print(
-                                f"-> {function_call_result.parts[0].function_response.response}"
-                            )
-                    messages.append(
-                        types.Content(role="tool", parts=function_response_parts)
-                    )
+                            print(f"-> {result.parts[0].function_response.response}")
+                    messages.append(types.Content(role="tool", parts=tool_turn_parts))
                     continue
                 else:
                     break
         except Exception:
+            console = Console()
             console.print_exception()
             break
 

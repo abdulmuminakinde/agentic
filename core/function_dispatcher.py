@@ -43,7 +43,7 @@ def call_function(function_call_part, verbose=False):
                             "tool": function_name,
                             "confirmation_required": True,
                             "args": args,
-                            "note": f"{function_name} requires confirmation.",
+                            "note": f"{function_name} requires confirmation. Please confirm before proceedding.",
                         }
                     },
                 )
@@ -52,6 +52,8 @@ def call_function(function_call_part, verbose=False):
 
     try:
         result = tool.run(**args)
+        if "pending" in confirmation_queue:
+            del confirmation_queue["pending"]
         if not result:
             result = {"output": "No tools found or response was empty."}
     except Exception as e:
