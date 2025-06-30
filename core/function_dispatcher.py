@@ -28,8 +28,6 @@ def call_function(function_call_part, verbose=False):
 
     try:
         result = tool.run(**args)
-        # if "pending" in confirmation_queue:
-        #     del confirmation_queue["pending"]
         if not result:
             result = {"output": "No tools found or response was empty."}
     except Exception as e:
@@ -44,12 +42,3 @@ def call_function(function_call_part, verbose=False):
             )
         ],
     )
-
-
-def confirm_and_execute_tool(tool_name, args, **kwargs):
-    """Execute a previously requested tool after confirmation."""
-    if tool_name in tool_map:
-        tool = tool_map[tool_name]
-        return tool.run(**args)
-    else:
-        return {"error": f"Unknown tool: {tool_name}"}
