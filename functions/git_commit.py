@@ -33,6 +33,7 @@ def commit_git_message(working_directory, message):
             return f'Error: {result.stderr.decode("utf-8")}'
 
     except subprocess.CalledProcessError as e:
+        print(str(e))
         return f'Error: {e.stderr.decode("utf-8")}'
 
     return f'Commit successful: "{message}"'
