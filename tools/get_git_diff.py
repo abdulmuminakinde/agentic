@@ -14,6 +14,3 @@ class GetGitDiffTool(ToolPlugin):
     def run(self, **kwargs) -> dict:
         result = get_git_diff(**kwargs)
         return {"output": result}
-
-    def requires_confirmation(self) -> bool:
-        return False

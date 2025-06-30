@@ -87,10 +87,6 @@ def chat_with_agent(
 
                 if response.function_calls:
 
-                    print(f"DEBUG: Got {len(response.function_calls)} function calls")
-                    for i, fc in enumerate(response.function_calls):
-                        print(f"  Function call {i}: {fc.name}")
-
                     tool_turn_parts = []
                     print(f"Length of function calls: {len(response.function_calls)}")
                     for function_call_part in response.function_calls:
@@ -103,7 +99,6 @@ def chat_with_agent(
                         if verbose:
                             print(f"-> {result.parts[0].function_response.response}")
                         tool_turn_parts.append(result.parts[0])
-                    print(f"DEBUG: Created {len(tool_turn_parts)} tool response parts")
 
                     if tool_turn_parts:
                         messages.append(

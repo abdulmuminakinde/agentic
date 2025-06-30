@@ -55,6 +55,6 @@ schema_commit_git_message = types.FunctionDeclaration(
                 default=False,
             ),
         },
-        required=["message"],  # Don't require confirm – default is False
+        required=["message"],
     ),
 )

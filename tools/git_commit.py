@@ -26,6 +26,3 @@ class CommitGitMessageTool(ToolPlugin):
             "message": f"Committed: {kwargs.get('message')}",
             "output": result,
         }
-
-    def requires_confirmation(self) -> bool:
-        return False
