@@ -7,7 +7,6 @@ from google.genai import types
 from prompt_toolkit import PromptSession
 from rich.console import Console
 
-from core.confirmation_store import confirmation_queue
 from core.function_dispatcher import call_function
 from core.tool_registry import available_tools
 from format import print_formatted_response
@@ -74,21 +73,6 @@ def chat_with_agent(
 
         try:
             for _ in range(30):
-                if "pending" in confirmation_queue:
-                    pending = confirmation_queue["pending"]
-                    pending_tool = pending["tool"]
-                    pending_args = pending["args"]
-
-                    system_reminder = types.Content(
-                        role="system",
-                        parts=[
-                            types.Part(
-                                text=f"There is a pending tool call: '{pending_tool.name}' with arguments: {pending_args}. If the user confirms, you may execute it"
-                            )
-                        ],
-                    )
-
-                    messages.insert(0, system_reminder)
                 response = generate_response(client, messages, verbose)
 
                 if response.candidates:
@@ -103,19 +87,30 @@ def chat_with_agent(
 
                 if response.function_calls:
 
+                    print(f"DEBUG: Got {len(response.function_calls)} function calls")
+                    for i, fc in enumerate(response.function_calls):
+                        print(f"  Function call {i}: {fc.name}")
+
                     tool_turn_parts = []
+                    print(f"Length of function calls: {len(response.function_calls)}")
                     for function_call_part in response.function_calls:
                         result = call_function(function_call_part, verbose)
+
                         if not result.parts or not result.parts[0].function_response:
                             raise Exception(
                                 "Empty function call results or invalid function response"
                             )
-
-                        tool_turn_parts.append(result.parts[0])
-                        if not result.parts or not result.parts[0].function_response:
-                            raise Exception("empty function call result")
                         if verbose:
                             print(f"-> {result.parts[0].function_response.response}")
+                        tool_turn_parts.append(result.parts[0])
+                    print(f"DEBUG: Created {len(tool_turn_parts)} tool response parts")
+
+                    if tool_turn_parts:
+                        messages.append(
+                            types.Content(role="tool", parts=tool_turn_parts)
+                        )
+                        continue
+
                     messages.append(types.Content(role="tool", parts=tool_turn_parts))
                     continue
                 else:

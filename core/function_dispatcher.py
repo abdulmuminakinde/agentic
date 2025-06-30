@@ -1,7 +1,6 @@
 from google.genai import types
 
 from config import WORKING_DIR
-from core.confirmation_store import confirmation_queue
 from core.tool_registry import tool_map
 
 
@@ -13,9 +12,9 @@ def call_function(function_call_part, verbose=False):
     if verbose:
         print(f"Calling function: {function_call_part.name}({function_call_part.args})")
     else:
-        print(f" - Calling function: {function_call_part.name}")
+        print(f" - Calling function: {function_name}")
 
-    tool = tool_map[function_name]
+    tool = tool_map.get(function_name)
     if not tool:
         return types.Content(
             role="tool",
@@ -26,34 +25,11 @@ def call_function(function_call_part, verbose=False):
                 )
             ],
         )
-    if tool.requires_confirmation():
-        confirmation_queue["pending"] = {
-            "tool": tool,
-            "args": args,
-            "function_name": function_name,
-        }
-
-        return types.Content(
-            role="tool",
-            parts=[
-                types.Part.from_function_response(
-                    name=function_name,
-                    response={
-                        "result": {
-                            "tool": function_name,
-                            "confirmation_required": True,
-                            "args": args,
-                            "note": f"{function_name} requires confirmation. Please confirm before proceedding.",
-                        }
-                    },
-                )
-            ],
-        )
 
     try:
         result = tool.run(**args)
-        if "pending" in confirmation_queue:
-            del confirmation_queue["pending"]
+        # if "pending" in confirmation_queue:
+        #     del confirmation_queue["pending"]
         if not result:
             result = {"output": "No tools found or response was empty."}
     except Exception as e:
@@ -64,7 +40,16 @@ def call_function(function_call_part, verbose=False):
         parts=[
             types.Part.from_function_response(
                 name=function_name,
-                response={"result": result},
+                response=result,
             )
         ],
     )
+
+
+def confirm_and_execute_tool(tool_name, args, **kwargs):
+    """Execute a previously requested tool after confirmation."""
+    if tool_name in tool_map:
+        tool = tool_map[tool_name]
+        return tool.run(**args)
+    else:
+        return {"error": f"Unknown tool: {tool_name}"}

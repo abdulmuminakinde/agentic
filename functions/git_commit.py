@@ -41,14 +41,20 @@ def commit_git_message(working_directory, message):
 
 schema_commit_git_message = types.FunctionDeclaration(
     name="commit_git_message",
-    description="Commit git changes with the specified message.",
+    description="Commit git changes with the specified message. Requires confirmation before execution.",
     parameters=types.Schema(
         type=types.Type.OBJECT,
         properties={
             "message": types.Schema(
                 type=types.Type.STRING,
-                description="The commit message to be commited inside the git repo.",
-            )
+                description="The commit message to be committed inside the git repo.",
+            ),
+            "confirm": types.Schema(
+                type=types.Type.BOOLEAN,
+                description="Set to true to actually commit. If false or missing, the tool will ask for confirmation.",
+                default=False,
+            ),
         },
+        required=["message"],  # Don't require confirm – default is False
     ),
 )
