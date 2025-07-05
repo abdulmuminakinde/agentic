@@ -3,8 +3,14 @@ from pathlib import Path
 
 from google.genai import types
 
+from .git_utils import check_git_repo
+
 
 def commit_git_message(working_directory, message):
+    message, is_git = check_git_repo(working_directory)
+    if not is_git:
+        return f"Error: {message}"
+
     abs_working_dir = Path(working_directory).resolve()
     target_dir = abs_working_dir
 
@@ -15,15 +21,6 @@ def commit_git_message(working_directory, message):
         return f'Error: "{target_dir}" is not a directory'
 
     try:
-        check_git_dir = subprocess.run(
-            ["git", "rev-parse", "--is-inside-work-tree"],
-            cwd=str(target_dir),
-            capture_output=True,
-            check=True,
-        )
-        if check_git_dir.returncode != 0:
-            return f'Error: "{target_dir}" is not a git directory'
-
         result = subprocess.run(
             ["git", "commit", "-m", message],
             cwd=str(target_dir),
