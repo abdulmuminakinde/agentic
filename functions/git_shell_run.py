@@ -28,8 +28,8 @@ def git_shell_run(working_directory, command):
         if result.returncode != 0:
             return f'Error: {result.stderr.decode("utf-8")}'
 
-        return result.stdout.decode("utf-8")
-
     except subprocess.CalledProcessError as e:
         print(str(e))
         return f'Error: {e.stderr.decode("utf-8")}'
+
+    return f'Command successful: Ran "{command}" with the following result {result.stdout.decode().strip()}"'

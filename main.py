@@ -88,7 +88,6 @@ def chat_with_agent(
                 if response.function_calls:
 
                     tool_turn_parts = []
-                    print(f"Length of function calls: {len(response.function_calls)}")
                     for function_call_part in response.function_calls:
                         result = call_function(function_call_part, verbose)
 

@@ -11,7 +11,7 @@ class GitShellRunner(ToolPlugin):
     def schema(self) -> types.FunctionDeclaration:
         return types.FunctionDeclaration(
             name="run_git_shell_command",
-            description="Run an arbitrary git command inside the git repo after explaining what it will do and confirming with the user. After execution, report the result of the command where necessary",
+            description="Run an arbitrary git command inside the git repo after explaining what it will do and confirming with the user before execution. After execution, report the result of the command where necessary",
             parameters=types.Schema(
                 type=types.Type.OBJECT,
                 properties={
@@ -21,7 +21,7 @@ class GitShellRunner(ToolPlugin):
                     ),
                     "confirm": types.Schema(
                         type=types.Type.BOOLEAN,
-                        description="Must be True to execute command. If false or missing, the tool will ask for confirmation.",
+                        description="Set to true to actually execute command. If false or missing, the tool will ask for confirmation.",
                         default=False,
                     ),
                 },
@@ -33,7 +33,7 @@ class GitShellRunner(ToolPlugin):
         if not kwargs.get("confirm", False):
             return {
                 "status": "confirmation_required",
-                "message": f"Do you want to run: '{kwargs.get('command')}'?",
+                "message": f"Are you sure you want to run: '{kwargs.get('command')}'?",
                 "args": {**kwargs, "confirm": True},
             }
 
@@ -41,6 +41,6 @@ class GitShellRunner(ToolPlugin):
         result = git_shell_run(**cleaned_args)
         return {
             "status": "success",
-            "message": f"Committed: {kwargs.get('message')}",
+            "message": f"Executed: {kwargs.get('command')}",
             "output": result,
         }
