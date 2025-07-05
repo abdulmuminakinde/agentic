@@ -7,9 +7,9 @@ from .git_utils import check_git_repo
 
 
 def commit_git_message(working_directory, message):
-    message, is_git = check_git_repo(working_directory)
+    repo_result, is_git = check_git_repo(working_directory)
     if not is_git:
-        return f"Error: {message}"
+        return f"Error: {repo_result}"
 
     abs_working_dir = Path(working_directory).resolve()
     target_dir = abs_working_dir
