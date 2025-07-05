@@ -5,6 +5,7 @@ from tools.get_files_info import GetFilesInfoTool
 from tools.get_git_diff import GetGitDiffTool
 from tools.git_commit import CommitGitMessageTool
 from tools.git_push import PushRepoToRemoteTool
+from tools.git_shell_runner import GitShellRunner
 from tools.help import HelpTool
 from tools.run_python_file import RunPythonFileTool
 from tools.write_file import WriteFileTool
@@ -17,6 +18,7 @@ tool_plugins = [
     WriteFileTool(),
     CommitGitMessageTool(),
     PushRepoToRemoteTool(),
+    GitShellRunner(),
 ]
 
 help_tool = HelpTool(tool_plugins)
